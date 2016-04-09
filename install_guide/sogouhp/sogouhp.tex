@@ -1,0 +1,128 @@
+%------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%------------------------------------------------------------------------------
+\documentclass[UTF8]{ctexart}
+\usepackage[left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm]{geometry}
+\usepackage[T1]{fontenc}
+%\usepackage{fourier}
+%\usepackage{times}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{amsmath,amsfonts,amsthm}
+\usepackage{graphicx}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{sectsty}
+\usepackage{color}
+\usepackage{indentfirst} 
+%\allsectionsfont{ \centering \normalfont }
+\allsectionsfont{ \normalfont }
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\fancyhead{}
+\fancyfoot[L]{}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\headheight}{13.6pt}
+
+\numberwithin{equation}{section}
+\numberwithin{figure}{section}
+\numberwithin{table}{section}
+\setlength\parindent{0pt}
+\setlength{\parindent}{2em}
+
+%------------------------------------------------------------------------------
+%	TITLE SECTION
+%------------------------------------------------------------------------------
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}}
+\title{
+        \normalfont \normalsize
+        %\textsc{UNIVERSITY OF SCIENCE AND TECHNOLOGY OF CHINA} \\ [25pt]
+        {UNIVERSITY OF SCIENCE AND TECHNOLOGY OF CHINA} \\ [25pt]
+        \horrule{0.8pt} \\[0.4cm]
+        \LARGE {UBUNTU14.04 安装搜狗输入法和hp打印机驱动} \\
+        %\Large {Part III : } %\Large {Review on ViscoElastic Media} \\
+        \horrule{2pt} \\[0.5cm]
+       }
+\author{ZHOU Li}
+\date  {\normalsize\today}
+\begin{document}
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+%-----------------------------------------------------------------------------
+\noindent\LARGE\section{\color{blue}这个还需要教程吗?}
+\normalsize{的确在大多数情况下ubuntu14.04安装搜狗拼音输入法只需双击deb包,装hp打印机驱动只需运行
+一下shell脚本就可,写个教程的确有点low.不过作为一个较新的发行版,对于一些三方软件14.04还
+是显得有点娇贵,时不时会出些bug!}
+\newline
+\indent{前两天更新后,hp打印机驱动出了问题,显示的错误是找不到python gtk的库,按它的提示
+装了几个库后,还是不行,我就想把python都给卸载了,重新配置python,就是在这时犯了一个剁手的
+错误,我用sudo apt-get autoremove python* 来卸载,好吧现在问题来了,gnome, unity, desktop的
+软件库依赖都被删了,很多应用都不行了,关机重启后连桌面系统都进不了,网络链接也出问题了,
+没办法只能再命令行界面修复了.在修复好桌面环境后我发现之前的搜狗拼音也用不了,虽然ubuntu下的
+搜狗拼音也有一些小bug,不过词库丰富,相比于其它输入法对我而言还是高效一些.下面我就介绍一下比较
+完美的14.04下安装搜狗拼音和hp打印机驱动的方法.}
+%-----------------------------------------------------------------------------
+\noindent\LARGE\section{\color{blue}安装搜狗拼音}
+\noindent\large{Step 1.去官网下载.deb包}
+{\small\color{blue}\begin{verbatim}
+    http://pinyin.sogou.com/linux/?r=pinyin
+\end{verbatim}}
+
+\noindent\large{Step 2.清理系统fcitx环境}
+{\color{Brown}{\begin{verbatim}
+    sudo apt-get purge fcitx*
+    sudo purge autoremove    
+\end{verbatim}}}
+
+\noindent\large{Step 3.安装依赖库}
+\newline\indent
+\normalsize{相比于用软件中心来安装deb包，我更喜欢用安装器GDebi来安装deb包，和GDebi比起来，
+ Ubuntu软件中心慢的太多了，CPU占用率也非常之高，而且应为不能自动解决依赖问题，总会出各种
+ 小bug。}
+{\color{Brown}{\begin{verbatim}
+    sudo apt-get install gdebi    
+\end{verbatim}}}
+
+\noindent\large{Step 4.用GDebi安装搜狗deb包}
+{\color{Brown}{\begin{verbatim}
+    sudo gdebi sogou_pinyin_linux_1.1.0.0037_amd64.deb
+\end{verbatim}}}
+\normalsize{然后重启，如果没有出现搜狗请在
+系统设置->语言支持->键盘输入方式系统->选择fcitx}
+
+\noindent\LARGE{\section{\color{blue}hp 打印机驱动安装}}
+\normalsize ubuntu14.04默认的打印机驱动只适用部分hp打印机,如果不支持你的打印机型号，可以参考：
+\normalsize{\color{blue}\begin{verbatim}
+    http://hplipopensource.com/hplip-web/install/manual/distros/ubuntu.html
+\end{verbatim}}
+如果选则网络打印，需要配置好Apache HTTP服务器,安装appach2如下:
+\normalsize{\color{blue}\begin{verbatim}
+    sudo apt-get install apache2
+\end{verbatim}}
+%-----------------------------------------------------------------------------
+\end{document}
+%-----------------------------------------------------------------------------
+%\section{Example of list (3*itemize)}
+%\begin{itemize}
+%	\item First item in a list
+%		\begin{itemize}
+%		\item First item in a list
+%			\begin{itemize}
+%			\item First item in a list
+%			\item Second item in a list
+%			\end{itemize}
+%		\item Second item in a list
+%		\end{itemize}
+%	\item Second item in a list
+%\end{itemize}
+%-----------------------------------------------------------------------------
+%\section{Example of list (enumerate)}
+%\begin{enumerate}
+%  \item First item in a list
+%  \item Second item in a list
+%  \item Third item in a list
+%\end{enumerate}

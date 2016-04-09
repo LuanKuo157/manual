@@ -1,0 +1,298 @@
+%------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%------------------------------------------------------------------------------
+\documentclass[paper=a4, fontsize=11pt]{scrartcl}
+\usepackage[T1]{fontenc}
+%\usepackage{fourier}
+%\usepackage{times}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{amsmath,amsfonts,amsthm}
+\usepackage{graphicx}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{sectsty}
+\usepackage{color}
+%\allsectionsfont{ \centering \normalfont }
+\allsectionsfont{ \normalfont }
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\fancyhead{}
+\fancyfoot[L]{}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\headheight}{13.6pt}
+
+\numberwithin{equation}{section}
+\numberwithin{figure}{section}
+\numberwithin{table}{section}
+\setlength\parindent{0pt}
+
+%------------------------------------------------------------------------------
+%	TITLE SECTION
+%------------------------------------------------------------------------------
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}}
+\title{
+        \normalfont \normalsize
+        %\textsc{UNIVERSITY OF SCIENCE AND TECHNOLOGY OF CHINA} \\ [25pt]
+        {UNIVERSITY OF SCIENCE AND TECHNOLOGY OF CHINA} \\ [25pt]
+        \horrule{0.8pt} \\[0.4cm]
+        \LARGE {Instruction of Installation of Dependent software and Libraries to FD2DtopoEw} \\
+        %\Large {Part III : } %\Large {Review on ViscoElastic Media} \\
+        \horrule{2pt} \\[0.5cm]
+       }
+\author{ZHOU Li,Sun Yao-Chong, ZHANG Wei}
+\date  {\normalsize\today}
+\begin{document}
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+%-----------------------------------------------------------------------------
+\LARGE{\section{Introduction}}
+\normalsize{
+This manual describes how to obtain and install NETCDF4 and MPICH3.NETCDF and MPICH has many options.Since we just
+want to run the MPI and NETCDF program and applications, We will only offer a briefly 'standard'installation guide.
+We also provide a brief guide to install matlab and intel compilers including icc and ifort in  this manual.  }
+\\
+%-----------------------------------------------------------------------------
+\LARGE{\section{Install Intel Compilers }}
+\Large{2.1}. You can download netcdf C and fortran package from 
+{\color{Brown}\begin{verbatim}
+http://software.intel.com/en-us/articles/intel-parallel-stu
+dio-xe-2013-sp1-for-linux-update-2
+\end{verbatim}}
+\Large{2.2}. Unpack the tar file and enter to this directory,then run \textcolor{red}{$install.sh$} or \textcolor{red}{$install\_GUI.sh$}:
+{\color{blue}\begin{verbatim}
+$ tar -xvf parallel_studio_xe_2013_sp1_update2.tgz 
+$ cd parallel_studio_xe_2013_sp1_update2
+$ sudo sh intall.sh #or sudo sh install_GUI.sh
+\end{verbatim}}
+Then follow the prompts to complete installation.And you can refer detail installation information from the install
+manumal Release\_Notes\_S  \\
+tudio \_XE\_2013SP1\_L.pdf in the tar package.
+\\
+\Large{2.3}.Edit the .bashrc or /etc/profile to set the environment variables.
+{\color{Brown}\begin{verbatim}
+$ vim  ~/.profile or sudo vim /etc/profile
+\end{verbatim}}
+Then add the commands below:
+{\color{blue}\begin{verbatim}
+if [ -f /opt/intel/bin/ifortvars.sh ]; then
+     source /opt/intel/bin/ifortvars.sh intel64
+fi
+if [ -f  /opt/intel/bin/iccvars.sh ]; then
+    source /opt/intel/bin/iccvars.sh intel64
+fi
+\end{verbatim}}
+Then let the configured environment variables become effective:
+{\color{blue}\begin{verbatim}
+$ source ~/.profile  or  . /etc/profile
+\end{verbatim}}
+%-----------------------------------------------------------------------------------------------------------------------------------------
+
+\LARGE{\section{Install Matlab and Snctools}}
+\Large{3.1}. Dowload the installation *.iso file .
+\\
+\Large{3.2}. Mount the *.iso file :
+{\color{blue}\begin{verbatim}
+$ sudo mount -o loop Mathworks.Matlab.R2012a.UNIX.iso /mnt 
+$ cd  /mnt
+$ sudo ./install
+\end{verbatim}}
+Then follow the prompts to complete installation.  
+You may got the following error when you try to launch MATLAB in Ubuntu 12.04 64bit: 
+{\color{blue}\begin{verbatim}
+/opt/MATLAB/R2011a/bin/util/oscheck.sh: 605: /lib/libc.
+so.6: not found
+\end{verbatim}}
+To resolve this problem, open a Terminal window and use the commands below:
+{\color{blue}\begin{verbatim}
+$ sudo ln -s /lib/x86_64-linux-gnu/libc-2.15.so /lib64/ 
+libc.so.6
+\end{verbatim}}
+This command tries to create a link to the newest libc(2.15) dynamic library located under
+/lib/x86\_64-linux-gnu/ and put it to /lib64/ or /lib/ named as libc.so.6, 
+which is required by Matlab. 
+\\
+\Large{3.3}.Edit the ~/.profile  or /etc/profile to set the environment variables.
+{\color{Brown}\begin{verbatim}
+$ vim  ~/.profile  or sudo vim /etc/profile
+\end{verbatim}}
+Then add the commands below into ~/.profile  or /etc/profile:
+{\color{blue}\begin{verbatim}
+PATH="$PATH:/opt/Matlab/R2012a/bin"
+\end{verbatim}}
+Then let the configured environment variables become effective:
+{\color{blue}\begin{verbatim}
+$ source ~/.profile  or . /etc/profile
+\end{verbatim}}
+\Large{3.4}.Install Snctools toolbox Plug-in
+\\
+\large{Setep 1}. Download mexcdf Plug-in from
+{\color{Brown}\begin{verbatim}
+ http://mexcdf.sourceforge.net/
+\end{verbatim}}
+\large{Setep 2}. Unpack the zip file and copy it to matlab toolbox directory:
+{\color{Brown}\begin{verbatim}
+$ unzip mexcdf.r4053.zip
+$ cp mexcdf /opt/Matlab/R2012a/toolbox
+\end{verbatim}}
+\large{Setep 3}.Add the mexcdf directory into your matlab path.
+{\color{Brown}\begin{verbatim}
+$ Menu Files->Set Path then->Add with Subfolders
+or 
+$suo vim /opt/Matlab/R2012a/toolbox/local/pathdef.m
+\end{verbatim}}
+%-------------------------------------------------------------------------------------------------------------------------------
+\LARGE{\section{Install NETCDF4}}
+
+\Large{4.1}. You can download netcdf C and fortran package from 
+{\color{Brown}\begin{verbatim}
+http://www.unidata.ucar.edu/downloads/netcdf/index.jsp
+\end{verbatim}}
+
+\Large{4.2}. Install NetCDF C library
+\\
+\large{4.2.1}. Unpack the tar file and enter to this directory:
+\\
+{\color{blue}\begin{verbatim}
+$ tar -xvf netcdf-4.3.1.1.tar.gz
+$ cd netcdf-4.3.1.1
+\end{verbatim}}
+\large{4.2.2}.For gcc version:
+\\
+{\color{blue}\begin{verbatim}
+$ export CC=gcc
+$ sudo ./configure --prefix=/opt/netcdf4/4.3.1-gcc --disable-dap 
+--disable-netcdf-4
+$ make check
+$ make install
+\end{verbatim}}
+The explanation of the above commands:
+{\color{green}\begin{verbatim}
+$ ./configure       
+ \end{verbatim}}
+The configuration script will set up the Makefiles that will be used to build the NetCDF libraries and utilities. 
+It will also set up the installation directory for the default location of /usr/local.
+If you would like to install the libraries in another location, use this configure command:
+{\color{green}\begin{verbatim}
+$ ./configure --prefix=/your/desired/install/directory)
+\end{verbatim}}
+And if you want to create a directory in the root directory , you need add 'sudo' in front of ./configure .
+{\color{green}\begin{verbatim}
+$ make----Make the libraries
+\end{verbatim}}
+When the configuration step completes successfully, you can build the libraries using `make'.
+{\color{green}\begin{verbatim}
+$ make check-----Testing NetCDF on Linux*
+\end{verbatim}}
+You can test your NetCDF libraries using 'make check'.
+{\color{green}\begin{verbatim}
+$ make install------Installing NetCDF on Linux*
+\end{verbatim}}
+Install NetCDF libraries using 'make install'.
+ This will install the NetCDF libraries, include files, and utilities in the default location of /usr/local or the location specified in the configuration 
+ step with the --prefix= option.
+ \\
+ And you can also run  the shell script \textcolor{red}{$netcdfc\_install\_allin1.sh$} from the attachment to install NETCDF4.
+ \\
+\large{4.2.3}.For icc version:
+\\
+ {\color{blue}\begin{verbatim}
+  $   export CC=icc
+  $   export LDFLAGS=-static-intel
+  $   sudo ./configure --prefix=/opt/netcdf4/4.3.1-icc --disable-dap
+  --disable-netcdf-4
+  $   make check
+  $   make install
+ \end{verbatim}}
+ Any detail information please see part 2.2.And you can also run  the shell script 
+ \textcolor{red}{$netcdfc\_ \\
+ install\_allin1.sh$} from the attachment to install NETCDF4 for icc compiler.
+ \newline
+ \Large{4.3}. Install NetCDF Fortran library
+ \newline
+\large{4.3.1}. Unpack the tar file and enter to this directory:
+{\color{blue}\begin{verbatim}
+$ tar -xvf netcdf-fortran-4.2.tar.gz
+$ cd netcdf-fortran-4.2
+\end{verbatim}}
+\large{4.3.2}.For ifort version:
+\\
+{\color{blue}\begin{verbatim}
+$   export LD_LIBRARY_PATH=/opt/netcdf4/4.3.1-icc/lib:${LD_LIBRARY_PATH}
+$   export CC=icc
+$   export FC=ifort
+$   export CPPFLAGS=-I/opt/netcdf4/4.3.1-icc/include
+$   export LDFLAGS=-L/opt/netcdf4/4.3.1-icc/lib
+$   sudo ./configure --prefix=/opt/netcdf4/4.2.2-ifort
+$   make check
+$   sudo make install
+\end{verbatim}}
+If you want to install netcdf on other fortran compiler,please see and run  the shell script 
+ \textcolor{red}{$netcdff\_install\_allin1.sh$} from the attachment.
+%-------------------------------------------------------------------------------------------
+
+ \LARGE{\section{Install MPICH3}}
+\Large{5.1}. You can download MPICH from 
+{\color{Brown}\begin{verbatim}
+http://www.mpich.org/
+\end{verbatim}}
+\large{5.2}. Unpack the tar file and enter to this directory:
+{\color{blue}\begin{verbatim}
+$ tar -xvf mpich-3.1.tar.gz
+$ cd mpich-3.1
+\end{verbatim}}
+{\color{blue}\begin{verbatim}
+ $ make clean
+ $ make V=1
+ $ sudo ./configure \
+  CC=/usr/bin/gcc\
+  CXX=/usr/bin/gcc\
+  F77=/opt/intel/composer_xe_2013_sp1.2.144/bin/intel64/ifort \
+  FC=/opt/intel/composer_xe_2013_sp1.2.144/bin/intel64/ifort \
+  --enable-fast=all MPICHLIB_CFLAGS=-O3 \
+  MPICHLIB_FFLAGS=-O3 \
+  MPICHLIB_CXXFLAGS=-O3 \
+  MPICHLIB_FCFLAGS=-O3 \
+  --enable-debuginfo \
+  --enable-shared \
+  -prefix=/opt/mpich/3.1-intel
+ $ make
+ $ make check
+ $ sudo  make install
+ \end{verbatim}}
+ You can also install MPICH3 by running  the shell script \textcolor{red}{$mpich3\_install.sh$}.Since the install.pdf of MPICH writes very  clear ,
+ you can refer from it,so I don't want to describe more
+ \LARGE{\section{Contact Us}}
+\normalsize{This is just a draft. If you have any questions or advice, please contact us.}
+%\begin{figure}
+% \centering
+% \includegraphics[width=60mm,height=60mm]{distributed.png}
+%\end{figure}
+%\newpage
+%-----------------------------------------------------------------------------
+\end{document}
+%-----------------------------------------------------------------------------
+%\section{Example of list (3*itemize)}
+%\begin{itemize}
+%	\item First item in a list
+%		\begin{itemize}
+%		\item First item in a list
+%			\begin{itemize}
+%			\item First item in a list
+%			\item Second item in a list
+%			\end{itemize}
+%		\item Second item in a list
+%		\end{itemize}
+%	\item Second item in a list
+%\end{itemize}
+%-----------------------------------------------------------------------------
+%\section{Example of list (enumerate)}
+%\begin{enumerate}
+%  \item First item in a list
+%  \item Second item in a list
+%  \item Third item in a list
+%\end{enumerate}

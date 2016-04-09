@@ -1,0 +1,195 @@
+%------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%------------------------------------------------------------------------------
+\documentclass[20pt]{article}
+\usepackage[left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm]{geometry}
+%\usepackage[T1]{fontenc}
+\usepackage{xeCJK}
+%\usepackage{fourier}
+%\usepackage{times}
+%\usepackage{lmodern}
+\setCJKmainfont{SimSun}
+\setCJKsansfont{SimHei}
+\setCJKmonofont{SimHei}
+\usepackage[english]{babel}
+\usepackage{amsmath,amsfonts,amsthm}
+\usepackage{graphicx}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{sectsty}
+\usepackage{color}
+\usepackage{indentfirst}
+\usepackage{setspace} 
+\usepackage{ulem}
+%\allsectionsfont{ \centering \normalfont }
+\allsectionsfont{ \normalfont }
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\fancyhead{}
+\fancyfoot[L]{}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\headheight}{13.6pt}
+
+\numberwithin{equation}{section}
+\numberwithin{figure}{section}
+\numberwithin{table}{section}
+\setlength\parindent{0pt}
+\setlength{\parindent}{2em}
+
+%------------------------------------------------------------------------------
+%	TITLE SECTION
+%------------------------------------------------------------------------------
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}}
+\title{
+        \normalfont \normalsize
+        %\textsc{UNIVERSITY OF SCIENCE AND TECHNOLOGY OF CHINA} \\ [25pt]
+        {UNIVERSITY OF SCIENCE AND TECHNOLOGY OF CHINA} \\ [25pt]
+        \horrule{0.8pt} \\[0.4cm]
+        \LARGE {ubuntu操作手册} \\
+        %\Large {Part III : } %\Large {Review on ViscoElastic Media} \\
+        \horrule{2pt} \\[0.5cm]
+       }
+\author{ZHOU Li}
+\date  {\normalsize\today}
+\begin{document}
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+%-----------------------------------------------------------------------------
+\noindent\LARGE\section{\color{blue}如何杀死僵尸进程}
+\normalsize{在UNIX 系统中,一个进程结束了,但是它的父进程没有等待(调用
+wait / waitpid)它, 那么它将变成一个僵尸进程.  在fork()/execve()过程中，
+假设子进程结束时父进程仍存在，而父进程fork()之前既没安装SIGCHLD信号处
+理函数调用 waitpid()等待子进程结束，又没有显式忽略该信号，则子进程成为僵尸进程。}
+%-----------------------------------------------------------------------------
+\begin{spacing}{2.0} 
+\noindent\large\color{Green}{Step 1.查看僵尸进程}
+\end{spacing}
+在终端输入
+{\small\color{Brown}\begin{verbatim}
+    ps -A -ostat,ppid,pid,cmd | grep -e '^[zZ]'
+    或者
+    ps -ef | grep defunct
+\end{verbatim}}
+\begin{spacing}{2.0}
+\noindent\large\color{Green}{Step 2.杀死僵尸进程}
+\end{spacing}
+\normalsize{一般僵尸进程很难直接kill掉，不过您可以kill僵尸爸爸。父进程死后，僵尸
+ 进程成为”孤儿进程”，过继给1号进程init，init始终会负责清理僵尸进程．它产生的所
+ 有僵尸进程也跟着消失。}
+{\color{Brown}{\begin{verbatim}
+    kill -HUP `ps -A -ostat,ppid | grep -e ’^[Zz]‘ | awk ’{print $2}’`
+    或者
+    ps -ef | grep defunct | grep -v grep | awk '{print "kill -9 " $2,$3}'
+\end{verbatim}}}
+%-----------------------------------------------------------------------------
+\noindent\LARGE\section{\color{blue}sed基本语法}
+\normalsize{sed是一种非交互式的流编辑器，可动态编辑文件。所谓非交互式是说，sed和
+传统的文本编辑器不同，并非和使用者直接互动，sed处理的对象是文件的数据流（称为
+stream/流）。sed的工作模式是，比对每一数据行，若符合样式，就执行指定的操作。}
+\noindent\large\subsection{\color{blue}sed替换}
+{\color{Brown}{\begin{verbatim}
+    sed -i 's/string1/string2/g' filename
+\end{verbatim}}}
+\noindent\large\subsection{\color{blue}sed删除}
+{\color{Brown}{\begin{verbatim}
+    1.删除某一段范围的数据行
+    sed '1,4d' filename
+    2.删除含某一字符或字符串的数据行
+    sed '/string/d' filename
+    3.删除空行
+    sed '/^$/d' filename
+\end{verbatim}}}
+
+%-----------------------------------------------------------------------------
+\noindent\LARGE\section{\color{blue}终端只显示当前目录}
+\normalsize{在进行终端操作时，有时长长的路径名会把整行都占满，看起来和操作起来
+    都很别扭，下面就讲一讲在.bashrc中怎么设置主提示符PS1为只显示当前目录}
+{\color{Brown}{\begin{verbatim}
+     vim ~/.bashrc
+\end{verbatim}}}
+\noindent{\color{blue}{找到}}
+{\color{Brown}{\begin{verbatim}
+    if [ "$color_prompt" = yes ]; then
+      PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\
+          [\033[01;34m\]\w\[\033[00m\]\$ '
+    else
+      PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+    fi
+\end{verbatim}}}
+将其中的w由小写改成大写，可以表示只显示当前目录名称。
+对SUSE和Centos等，.bahsrc中是没有这些语句的，直接将以上修改后语句的添加进去即可。
+\newline
+\noindent{\color{blue}{最后执行}}
+{\color{Brown}{\begin{verbatim}
+    . .bashrc
+\end{verbatim}}}
+使修改后的环境变量生效。
+\newline
+\noindent{\color{blue}{PS:}}
+\normalsize{如果想更加简洁，可以连@hostname都神略掉，直接变成usrname@currentdirectory,只需在.bashrc删掉@后面的$\backslash h$}
+%-----------------------------------------------------------------------------
+%-----------------------------------------------------------------------------
+\noindent\LARGE\section{\color{blue}mpirun error}
+\normalsize{组里新买了一台服务器，装的是suse，装好mpich3后，跑并行后出如下错误}
+{\color{Brown}{\begin{verbatim}
+     Fatal error in MPI_Init: Other MPI error, error stack:
+         MPIR_Init_thread(498)..............:
+         MPID_Init(177).....................: channel initialization failed
+         MPIDI_CH3_Init(89).................:
+         MPID_nem_init(320).................:
+         MPID_nem_tcp_init(171).............:
+         MPID_nem_tcp_get_business_card(418):
+             MPID_nem_tcp_init(377).............: gethostbyname failed, simulator2 (errno 1)
+\end{verbatim}}}
+之前没用过suse，老是以为哪里设置不对，折腾了好久，之后发现是通讯设置的问题。解决方法如下：
+{\color{Brown}{\begin{verbatim}
+    sudo vim /etc/hosts
+    修改如下：
+   　127.0.0.1        localhost.localdomain localhost
+   　ip               hostname
+\end{verbatim}}}
+第二行为对应的网络ip，hostname为机器名称。大部分linux发行版hosts文件已经配置好这些变量，
+你也就省的改掉了。
+%-----------------------------------------------------------------------------
+
+\noindent\LARGE\section{\color{blue}git操作常见问题}
+\normalsize{Git是一款免费、开源的分布式版本控制系统，用于敏捷高效地处理任何或小或大的项目}
+\noindent\large\subsection{\color{blue}更换git托管}
+\normalsize{更换git托管可能是一件主动也可能是一件被动的事情，比如我们组里的git远程服务器
+    时不时的会重启那么一次，ip有时就会改变。搞得我就很被动。}
+\begin{spacing}{2.0} 
+\noindent\large\color{Green}{方法１：}
+\end{spacing}
+假设你的remote是origin，用git remote set\uline{ }url 更换地址，remote\uline{ }git\uline{ }address更换成你的新的仓库地址.
+{\color{Brown}{\begin{verbatim}
+    git remote set-url origin remote_git_address
+\end{verbatim}}}
+\begin{spacing}{2.0} 
+\noindent\large\color{Green}{方法2：}　
+\end{spacing}
+执行如下命令：
+{\color{Brown}{\begin{verbatim}
+    git remote -v
+    git remote rm origin
+    git remote add origin git@222.195.xx.xx:name.git
+    git fetch origin
+\end{verbatim}}}
+\noindent\large\subsection{\color{blue}撤销commit}
+\normalsize{如果不满意当前的commit操作，可以对其进行撤销。
+先使用git log查看git commit日志，找到需要回退的那次commit的哈希值，其实也就是指针了。
+{\color{Brown}{\begin{verbatim}
+    git reset --hard <commit_id>
+    git push origin HEAD --force
+\end{verbatim}}}
+\noindent git reset –hard：彻底回退到某个版本，本地的源码也会变为上一个版本的内容;
+\newline
+git reset –soft：回退到某个版本，只回退了commit的信息，不会恢复到index file一级。
+如果还要提交，直接commit即可;
+\newline
+git reset –mixed：此为默认方式，不带任何参数的git reset，即时这种方式，它回退到某个版本，
+只保留源码，回退commit和index信息。
+\end{document}
